@@ -1,16 +1,16 @@
-import db from "../models/index.js";
+import { Sequelize } from "sequelize";
 
 export const connectDB = async () => {
-  try {
-    await db.sequelize.authenticate();
-    console.log("Connection to Clever Cloud established.");
+    const sequelize = new Sequelize({
+        dialect: "sqlite",
+        storage: "./database.sqlite" // this file will store your data
+    });
 
-    if (process.env.NODE_ENV === "development") {
-      await db.sequelize.sync({ alter: false });
-      console.log("Database models synced.");
+    try {
+        await sequelize.authenticate();
+        console.log("Database connected (SQLite)");
+        return sequelize;
+    } catch (error) {
+        console.error("Unable to connect to the database:", error);
     }
-  } catch (error) {
-    console.error("Unable to connect to the database:", error);
-    process.exit(1);
-  }
 };
