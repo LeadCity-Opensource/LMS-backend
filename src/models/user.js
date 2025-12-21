@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
-    'User',
+    "User",
     {
       user_id: {
         type: DataTypes.UUID,
@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       },
 
       user_type: {
-        type: DataTypes.ENUM('student', 'admin_staff', 'regular_staff'),
+        type: DataTypes.ENUM("student", "admin_staff", "regular_staff"),
         allowNull: false,
       },
 
@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      tableName: 'users',
+      tableName: "users",
       timestamps: false,
     }
   );
@@ -39,20 +39,20 @@ module.exports = (sequelize, DataTypes) => {
   User.associate = (models) => {
     // Student relationship
     User.belongsTo(models.Students, {
-      foreignKey: 'matric_no',
-      targetKey: 'matric_no',
+      foreignKey: "matric_no",
+      targetKey: "matric_no",
     });
 
     // Regular staff relationship
     User.belongsTo(models.StaffRegular, {
-      foreignKey: 'staff_id',
-      targetKey: 'staff_id',
+      foreignKey: "staff_id",
+      targetKey: "staff_id",
     });
 
     // Admin staff relationship
     User.belongsTo(models.LibraryStaffAdmin, {
-      foreignKey: 'staff_id',
-      targetKey: 'staff_id',
+      foreignKey: "staff_id",
+      targetKey: "staff_id",
     });
   };
 
