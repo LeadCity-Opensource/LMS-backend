@@ -1,4 +1,4 @@
 #!/bin/sh
 pnpm dlx ultracite fix
 
-pnpm dlx ultracite check
+pnpm dlx ultracite check || exit 1
