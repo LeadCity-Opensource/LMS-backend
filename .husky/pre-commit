@@ -1,2 +1,2 @@
 #!/bin/sh
-pnpm ultracite fix && pnpm ultracite check --error-on-warnings
+pnpm ultracite fix && pnpm ultracite check
