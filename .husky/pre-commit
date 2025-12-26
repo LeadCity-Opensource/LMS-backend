@@ -1,2 +1,2 @@
 #!/bin/sh
-pnpm dlx ultracite fix
+pnpm ultracite fix && pnpm ultracite check

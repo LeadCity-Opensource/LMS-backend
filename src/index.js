@@ -1,18 +1,15 @@
-import express from "express";
+import createApp from "./app.js";
 import { connectDB } from "./config/dbinit.js";
 import { env } from "./config/env.js";
+import { initializeAdmin } from "./data/bootstrap.js";
 
-const app = express();
+await connectDB();
 
-app.use(express.json());
+await initializeAdmin();
 
-app.get("/", (_req, res) => {
-  res.send("Hello world");
-});
+const app = createApp();
+const PORT = env.PORT || "5000";
 
-const PORT = env.PORT || 5000;
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
+app.listen(PORT, () => {
+  console.log(`[server]: API Service running on port ${PORT}`);
 });

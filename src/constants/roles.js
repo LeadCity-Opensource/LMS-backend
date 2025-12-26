@@ -1,0 +1,11 @@
+export const ROLES = {
+  ADMIN: "admin",
+  STAFF: "staff",
+  STUDENT: "student",
+};
+
+export const PERMISSIONS = {
+  EVERYONE: [ROLES.STUDENT, ROLES.STAFF, ROLES.ADMIN],
+  STAFF_AND_ADMIN: [ROLES.STAFF, ROLES.ADMIN],
+  ADMIN_ONLY: [ROLES.ADMIN],
+};
