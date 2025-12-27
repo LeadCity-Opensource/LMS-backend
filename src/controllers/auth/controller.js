@@ -136,7 +136,7 @@ export const login = async (req, res) => {
     res.status(200).json({
       token,
       role: user.role,
-      name: `${user.firstName} ${user.lastName}`,
+      name: `${user.fullName}`,
       id: user.id,
     });
   } catch (error) {

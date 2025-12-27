@@ -1,27 +1,46 @@
+// models/student.model.js
 export default (sequelize, DataTypes) => {
-  const Student = sequelize.define("Student", {
-    matricNumber: {
-      type: DataTypes.STRING,
-      unique: true,
-      allowNull: false,
+  const Student = sequelize.define(
+    "Student",
+    {
+      matric_no: {
+        type: DataTypes.STRING(20),
+        primaryKey: true, // matric_no is now the primary key
+        allowNull: false,
+      },
+      user_id: {
+        type: DataTypes.INTEGER,
+        unique: true, // ensures a user has only one student record
+        allowNull: false,
+      },
+      department: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+      },
+      level: {
+        type: DataTypes.STRING(20),
+        allowNull: true,
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
     },
-    department: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    entryYear: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    programDuration: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    programType: {
-      type: DataTypes.ENUM("Undergraduate", "Postgraduate"),
-      allowNull: false,
-    },
-  });
+    {
+      tableName: "students",
+      timestamps: false,
+    }
+  );
+
+  // Associations
+  Student.associate = (models) => {
+    // Link to the User table via user_id
+    Student.belongsTo(models.User, {
+      foreignKey: "user_id",
+      onDelete: "CASCADE",
+      as: "user",
+    });
+  };
 
   return Student;
 };

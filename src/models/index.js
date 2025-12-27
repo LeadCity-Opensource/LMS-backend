@@ -1,7 +1,9 @@
+// models/index.js
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import Sequelize from "sequelize";
+import pkg from "sequelize";
+const { Sequelize, DataTypes } = pkg;
 import sequelize from "../config/database.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -9,26 +11,27 @@ const __dirname = path.dirname(__filename);
 
 const db = {};
 
-// Reads all model files in this (models) directory (except this index file)
+// Read all model files in the current directory (excluding index.js)
 const modelFiles = fs
   .readdirSync(__dirname)
   .filter((file) => file !== "index.js" && file.endsWith(".js"));
 
-// Imports and initializes each model with sequelize
+// Import and initialize each model
 for (const file of modelFiles) {
-  const { default: modelDefiner } = await import(path.join(__dirname, file));
-  const model = modelDefiner(sequelize, Sequelize.DataTypes);
+  // Use relative import to avoid Windows file:// issues
+  const { default: modelDefiner } = await import(`./${file}`);
+  const model = modelDefiner(sequelize, DataTypes);
   db[model.name] = model;
 }
 
-// Sets up model relationships (associations) after all models are loaded
+// Set up associations if defined
 for (const modelName of Object.keys(db)) {
   if (db[modelName].associate) {
     db[modelName].associate(db);
   }
 }
 
-// Exposes sequelize instances for use elsewhere in the app
+// Expose sequelize instances for use elsewhere
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 

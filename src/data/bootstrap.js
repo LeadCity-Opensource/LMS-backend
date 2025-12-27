@@ -12,8 +12,7 @@ export const initializeAdmin = async () => {
     } else {
       const hashedPassword = await bcrypt.hash(env.ADMIN_PASSWORD, 10);
       await db.User.create({
-        firstName: "System",
-        lastName: "Admin",
+        full_name: "Admin User",
         email: env.ADMIN_EMAIL,
         password: hashedPassword,
         role: ROLES.ADMIN,
