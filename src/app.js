@@ -1,40 +1,27 @@
 import express from "express";
+import swaggerUi from "swagger-ui-express";
+import YAML from "yamljs";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
 import { protect } from "./middleware/auth.js";
 import adminRoutes from "./routes/admin/route.js";
 import authRoutes from "./routes/auth/route.js";
-import swaggerJsdoc from "swagger-jsdoc";
-import swaggerUi from "swagger-ui-express";
 
-const options = {
-  definition: {
-    openapi: "3.0.0",
-    info: {
-      title: "LMS Backend API",
-      version: "1.0.0",
-      description: "API documentation for the Learning Management System",
-    },
-    servers: [
-      {
-        url: "http://localhost:5000",
-        description: "Development server",
-      },
-    ],
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
-        },
-      },
-    },
-    security: [{ bearerAuth: [] }],
-  },
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const swaggerPath = path.resolve(__dirname, "swagger.yaml");
 
-  apis: ["./src/routes/**/*.js"],
-};
+console.log("-----------------------------------------");
+console.log("Searching for Swagger file at:", swaggerPath);
 
-const swaggerSpec = swaggerJsdoc(options);
+if (!fs.existsSync(swaggerPath)) {
+  console.log("❌ CRITICAL ERROR: The file 'swagger.yaml' is NOT in the root folder!");
+  console.log("Make sure it is inside: C:\\Users\\USER-PC\\Desktop\\lmsbackend\\LMS-backend\\");
+  console.log("-----------------------------------------");
+}
+
+const swaggerDocument = YAML.load(swaggerPath);
 
 const createApp = () => {
   const app = express();
@@ -44,17 +31,11 @@ const createApp = () => {
     res.send("Hello world");
   });
 
-   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
   app.use("/api/auth", authRoutes);
 
-  /*
-   * all routes before this middleware are unprotected
-   * all routes after this middleware are protected
-   */
   app.use(protect);
-
   app.use("/api/admin", adminRoutes);
 
   return app;

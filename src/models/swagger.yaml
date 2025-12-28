@@ -1,0 +1,78 @@
+openapi: 3.0.0
+info:
+  title: LMS Backend API
+  description: API documentation for the Learning Management System. Includes authentication, course management, and user roles.
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: admin@lms.com
+
+servers:
+  - url: http://localhost:5000
+    description: Local development server
+
+# 1. Definitions of your Data Models (Schemas)
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [admin, instructor, student]
+    
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+
+# 2. The API Endpoints
+paths:
+  /api/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Authenticate user and return token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successfully authenticated
+        '401':
+          description: Invalid credentials
+
+  /api/courses:
+    get:
+      tags:
+        - Courses
+      summary: Get all available courses
+      responses:
+        '200':
+          description: A list of courses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                    instructor:
+                      type: string
