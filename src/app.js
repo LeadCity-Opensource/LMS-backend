@@ -1,6 +1,6 @@
 import express from "express";
 import { protect } from "./middleware/auth.js";
-import globalErrorHandler from "./middleware/globalErrorHandler.js";
+import { globalErrorHandler } from "./middleware/errorHandler.js";
 import adminRoutes from "./routes/admin/route.js";
 import authRoutes from "./routes/auth/route.js";
 import bookRoutes from "./routes/books/route.js";
