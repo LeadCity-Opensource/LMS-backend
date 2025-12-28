@@ -31,7 +31,7 @@ const createApp = () => {
   app.use("/api/fines", fineRoutes);
 
   // Handle unhandled routes (404)
-  app.all("*", (req, _res, next) => {
+  app.all("/*splat", (req, _res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
   });
 
