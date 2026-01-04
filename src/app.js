@@ -36,9 +36,7 @@ const createApp = () => {
   });
 
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
   app.use("/api/auth", authRoutes);
-
   app.use(protect);
   app.use("/api/admin", adminRoutes);
 
