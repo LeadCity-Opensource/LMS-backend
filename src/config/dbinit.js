@@ -4,7 +4,7 @@ import { env } from "./env.js";
 export const connectDB = async () => {
   try {
     await db.sequelize.authenticate();
-    console.log(" db connection established.");
+    console.log(" db connection established");
 
     /*
      * In development only:

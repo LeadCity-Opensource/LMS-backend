@@ -18,7 +18,7 @@ export default (sequelize, DataTypes) => {
       allowNull: false,
     },
     programType: {
-      type: DataTypes.ENUM("Full-Time", "Part-Time"),
+      type: DataTypes.ENUM("Undergraduate", "Postgraduate"),
       allowNull: false,
     },
   });

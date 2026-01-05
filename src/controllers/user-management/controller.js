@@ -1,35 +1,36 @@
 import bcrypt from "bcryptjs";
 import { ROLES } from "../../constants/roles.js";
 import db from "../../models/index.js";
+import AppError from "../../utils/AppError.js";
 
 /**
  * Creates new Admin or Staff.
  */
-export const createAdminOrStaff = async (req, res) => {
+export const createAdminOrStaff = async (req, res, next) => {
   const { email, password, firstName, lastName, role, staffId, designation } =
     req.body;
 
   if (!email || !password || !firstName || !lastName || !role) {
-    return res.status(400).json({
-      message: "Required fields: email, password, firstName, lastName, role",
-    });
+    return next(
+      new AppError(
+        "Required fields: email, password, firstName, lastName, role",
+        400
+      )
+    );
   }
 
   const allowedRoles = [ROLES.ADMIN, ROLES.STAFF];
   if (!allowedRoles.includes(role.toLowerCase())) {
-    return res
-      .status(400)
-      .json({ message: "This route is for Admin or Staff creation only." });
+    return next(
+      new AppError("This route is for Admin or Staff creation only.", 400)
+    );
   }
 
   // If role is staff, ensure staffId is provided
   if (role === ROLES.STAFF && !staffId) {
-    return res
-      .status(400)
-      .json({ message: "Staff ID is required for staff accounts." });
+    return next(new AppError("Staff ID is required for staff accounts.", 400));
   }
 
-  // Start a transaction to prevent "orphan" users (User created without a Staff profile)
   const t = await db.sequelize.transaction();
 
   try {
@@ -37,9 +38,7 @@ export const createAdminOrStaff = async (req, res) => {
     const existingUser = await db.User.findOne({ where: { email } });
     if (existingUser) {
       await t.rollback();
-      return res
-        .status(400)
-        .json({ message: "User with this email already exists" });
+      return next(new AppError("User with this email already exists", 400));
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -68,7 +67,7 @@ export const createAdminOrStaff = async (req, res) => {
       );
     }
 
-    await t.commit(); // If all creations succeed, commit the changes to the database
+    await t.commit();
 
     res.status(201).json({
       message: `Account successfully created for ${firstName} ${lastName}`,
@@ -76,8 +75,7 @@ export const createAdminOrStaff = async (req, res) => {
       email: newUser.email,
     });
   } catch (error) {
-    await t.rollback(); // If any error occurs during the transaction, revert all database changes
-    console.error("Creation Error:", error);
-    res.status(500).json({ message: error.message || "Internal server error" });
+    await t.rollback();
+    next(error);
   }
 };

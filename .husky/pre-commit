@@ -1,2 +1,3 @@
 #!/bin/sh
-pnpm ultracite fix && pnpm ultracite check
+npx ultracite fix
+npx biome ci --error-on-warnings .
