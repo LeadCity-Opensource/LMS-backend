@@ -1,26 +1,21 @@
 {
   "name": "lms-backend",
   "version": "1.0.0",
-  "description": "Backend API for the Learning Management System (LMS)",
-  "main": "index.js",
   "type": "module",
+  "main": "src/index.js",
   "scripts": {
-    "dev": "nodemon src/index.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.3",
     "mysql2": "^3.16.0",
     "sequelize": "^6.37.7",
-    "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
-    "cors": "^2.8.5",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
