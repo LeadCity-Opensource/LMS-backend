@@ -15,7 +15,7 @@ import {
   borrowBook,
   listTransactions,
   returnBook,
-} from "./transaction-controller.js";
+} from "../../controllers/books-transactions/transaction-controller.js";
 
 const router = Router();
 

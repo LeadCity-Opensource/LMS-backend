@@ -17,7 +17,7 @@
  */
 
 import { Op } from "sequelize";
-import { BookTransaction } from "./transaction-model.js";
+import { BookTransaction } from "../../models/transaction-model.js";
 
 /**
  * Borrow a book
