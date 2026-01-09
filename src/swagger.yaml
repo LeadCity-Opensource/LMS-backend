@@ -1,0 +1,347 @@
+openapi: 3.0.0
+info:
+  title: LMS Backend API
+  version: 1.0.0
+  description: API documentation for the Learning Management System
+
+servers:
+  - url: https://lms-backend-qp3q.onrender.com
+    description: Production server
+  - url: http://localhost:5000
+    description: Development server
+
+tags:
+  - name: Authentication
+    description: User authentication and password management.
+  - name: Admin
+    description: Admin-only endpoints for user management.
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    AuthSuccessResponse:
+      type: object
+      required:
+        - token
+        - role
+        - name
+        - id
+      properties:
+        token:
+          type: string
+          description: JWT access token (valid for 7 days).
+        role:
+          type: string
+          description: Authenticated user's role.
+          enum:
+            - admin
+            - staff
+            - student
+        name:
+          type: string
+          description: User's full name.
+        id:
+          type: string
+          description: User ID.
+
+    SignupRequest:
+      type: object
+      required:
+        - email
+        - password
+        - firstName
+        - lastName
+        - matricNumber
+        - department
+        - entryYear
+        - programDuration
+        - programType
+      properties:
+        email:
+          type: string
+          format: email
+          example: student@example.com
+        password:
+          type: string
+          format: password
+          example: Password123!
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        phoneNumber:
+          type: string
+          nullable: true
+          example: "+2348012345678"
+        matricNumber:
+          type: string
+          example: "LCU/2024/001"
+        department:
+          type: string
+          example: "Computer Science"
+        entryYear:
+          type: integer
+          format: int32
+          description: Student entry year.
+          minimum: 1
+          example: 2024
+        programDuration:
+          type: integer
+          format: int32
+          description: Program duration in years.
+          minimum: 1
+          example: 4
+        programType:
+          type: string
+          description: Program type.
+          enum:
+            - Undergraduate
+            - Postgraduate
+          example: Undergraduate
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+
+    UpdatePasswordRequest:
+      type: object
+      required:
+        - oldPassword
+        - newPassword
+      properties:
+        oldPassword:
+          type: string
+          format: password
+        newPassword:
+          type: string
+          format: password
+
+    MessageResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+
+    ErrorResponse:
+      type: object
+      required:
+        - message
+      properties:
+        status:
+          type: string
+          description: Present for AppError responses handled by the global error handler in production.
+          enum:
+            - fail
+            - error
+        message:
+          type: string
+
+    CreateAdminOrStaffRequest:
+      type: object
+      required:
+        - email
+        - password
+        - firstName
+        - lastName
+        - role
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        firstName:
+          type: string
+        lastName:
+          type: string
+        role:
+          type: string
+          description: Only admin or staff are allowed for this endpoint.
+          enum:
+            - admin
+            - staff
+        staffId:
+          type: string
+          description: Required when role is staff.
+        designation:
+          type: string
+          description: Optional staff designation.
+          nullable: true
+
+    CreateAdminOrStaffResponse:
+      type: object
+      required:
+        - message
+        - role
+        - email
+      properties:
+        message:
+          type: string
+        role:
+          type: string
+          enum:
+            - admin
+            - staff
+        email:
+          type: string
+          format: email
+
+  responses:
+    BadRequest:
+      description: Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Unauthorized.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: Forbidden.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    InternalServerError:
+      description: Unexpected server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+paths:
+  /api/auth/signup:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      description: Creates a new student account and returns a JWT token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+      responses:
+        '201':
+          description: User created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login to the system
+      responses:
+        '200':
+          description: Successfully authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      description: Authenticates a user and returns a JWT token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+  /api/auth/update-password:
+    post:
+      tags:
+        - Authentication
+      summary: Update user password
+      description: Updates the password for the currently authenticated user.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePasswordRequest'
+      responses:
+        '200':
+          description: Password updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/admin/create-user:
+    post:
+      tags:
+        - Admin
+      summary: Create an admin or staff account
+      description: Creates a new admin or staff user. This endpoint requires an authenticated admin account.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAdminOrStaffRequest'
+      responses:
+        '201':
+          description: Account successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAdminOrStaffResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'

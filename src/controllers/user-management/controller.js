@@ -8,7 +8,7 @@ import AppError from "../../utils/AppError.js";
  */
 export const createAdminOrStaff = async (req, res, next) => {
   const { email, password, firstName, lastName, role, staffId, designation } =
-    req.body;
+    req.body || {};
 
   if (!email || !password || !firstName || !lastName || !role) {
     return next(

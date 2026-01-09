@@ -19,7 +19,7 @@ export const signup = async (req, res, next) => {
     entryYear,
     programDuration,
     programType,
-  } = req.body;
+  } = req.body || {};
 
   if (
     !email ||
@@ -28,11 +28,29 @@ export const signup = async (req, res, next) => {
     !lastName ||
     !matricNumber ||
     !department ||
-    !entryYear ||
-    !programDuration ||
     !programType
   ) {
     return next(new AppError("All required fields must be provided.", 400));
+  }
+
+  const entryYearNumber = Number(entryYear);
+  if (!Number.isInteger(entryYearNumber) || entryYearNumber <= 0) {
+    return next(new AppError("entryYear must be a valid integer.", 400));
+  }
+
+  const programDurationNumber = Number(programDuration);
+  if (!Number.isInteger(programDurationNumber) || programDurationNumber <= 0) {
+    return next(new AppError("programDuration must be a valid integer.", 400));
+  }
+
+  const allowedProgramTypes = ["Undergraduate", "Postgraduate"];
+  if (!allowedProgramTypes.includes(programType)) {
+    return next(
+      new AppError(
+        `programType must be one of: ${allowedProgramTypes.join(", ")}.`,
+        400
+      )
+    );
   }
 
   const t = await db.sequelize.transaction();
@@ -71,8 +89,8 @@ export const signup = async (req, res, next) => {
         userId: newUser.id,
         matricNumber,
         department,
-        entryYear,
-        programDuration,
+        entryYear: entryYearNumber,
+        programDuration: programDurationNumber,
         programType,
       },
       { transaction: t }
@@ -102,7 +120,7 @@ export const signup = async (req, res, next) => {
  * Authenticates a user and returns a JWT token.
  */
 export const login = async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password } = req.body || {};
 
   try {
     if (!email || !password) {
@@ -141,7 +159,7 @@ export const login = async (req, res, next) => {
  * Updates password for the currently authenticated user.
  */
 export const updatePassword = async (req, res, next) => {
-  const { oldPassword, newPassword } = req.body;
+  const { oldPassword, newPassword } = req.body || {};
   const userId = req.user.id;
 
   try {
