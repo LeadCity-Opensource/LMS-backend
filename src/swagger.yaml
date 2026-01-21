@@ -5,8 +5,10 @@ info:
   description: API documentation for the Learning Management System
 
 servers:
+  - url: https://lms-backend-qp3q.onrender.com
+    description: Production (Global) Server
   - url: http://localhost:5000
-    description: Development server
+    description: Development (Local) Server
 
 components:
   securitySchemes:
@@ -42,3 +44,36 @@ paths:
       responses:
         '200':
           description: Password updated
+
+  /api/admin/create-user:
+    post:
+      tags:
+        - Admin
+      summary: Create a new Admin or Staff user
+      description: Only accessible by users with Admin permissions.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                role:
+                  type: string
+                  enum: [admin, staff]
+                  default: staff
+      responses:
+        '201':
+          description: User created successfully
+        '401':
+          description: Unauthorized - No token provided
+        '403':
+          description: Forbidden - Insufficient permissions

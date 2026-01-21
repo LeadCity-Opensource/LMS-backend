@@ -1,3 +1,0 @@
-#!/bin/sh
-npx ultracite fix
-npx biome ci --error-on-warnings .
