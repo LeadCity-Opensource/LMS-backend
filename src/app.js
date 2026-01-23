@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import cors from "cors";
 import express from "express";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
@@ -30,6 +31,16 @@ try {
 
 const createApp = () => {
   const app = express();
+
+  app.use(
+    cors({
+      origin: ["https://final-lms-frontend.onrender.com", "http://localhost:3000"],
+      credentials: true,
+      methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization"],
+    })
+  );
+
   app.use(express.json());
 
   app.get("/", (_req, res) => {
