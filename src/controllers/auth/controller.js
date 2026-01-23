@@ -225,7 +225,7 @@ export const login = async (req, res, next) => {
     res.status(200).json({
       token,
       role: user.role,
-      name: `${user.fullName}`,
+      name: `${user.firstName} ${user.lastName}`,
       id: user.id,
     });
   } catch (error) {

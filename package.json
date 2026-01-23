@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
-    "prepare": "husky || true"
+    "prepare": "husky || true",
+    "lint": "npx ultracite@latest check",
+    "format": "npx ultracite@latest fix"
   },
   "keywords": [],
   "author": "",

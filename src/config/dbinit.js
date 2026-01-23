@@ -11,7 +11,8 @@ export const connectDB = async () => {
      * This tells Sequelize to automatically update the database tables
      * to match our model definitions when the app starts.
      */
-    if (env.NODE_ENV === "development") {
+    if (env.NODE_ENV === "development" && env.SYNC_DB === "true") {
+      console.log("Syncing database models...");
       await db.sequelize.sync({ alter: true });
       console.log("Database models synced.");
     }

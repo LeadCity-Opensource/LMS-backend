@@ -5,6 +5,7 @@ import db from "../models/index.js";
 
 export const initializeAdmin = async () => {
   try {
+    console.log("Initializing admin...");
     const adminExists = await db.User.findOne({ where: { role: ROLES.ADMIN } });
 
     if (adminExists) {
@@ -12,7 +13,8 @@ export const initializeAdmin = async () => {
     } else {
       const hashedPassword = await bcrypt.hash(env.ADMIN_PASSWORD, 10);
       await db.User.create({
-        full_name: "Admin User",
+        firstName: "System",
+        lastName: "Admin",
         email: env.ADMIN_EMAIL,
         password: hashedPassword,
         role: ROLES.ADMIN,
