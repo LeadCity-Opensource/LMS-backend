@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "lms-backend",
   "version": "1.0.0",
   "description": "Backend API for the Learning Management System (LMS)",
@@ -31,5 +32,25 @@
     "husky": "^9.1.7",
     "nodemon": "^3.1.11",
     "ultracite": "6.4.0"
+=======
+  "name": "library-management-system",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+  "start": "node src/index.js",
+  "dev": "nodemon src/index.js"
+}
+,
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+>>>>>>> 2e91414 (Add hardcoded books API with categories)
   }
 }
