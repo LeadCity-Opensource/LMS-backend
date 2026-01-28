@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import { ALLOWED_DESIGNATIONS } from "../../constants/designations.js";
 import { ROLES } from "../../constants/roles.js";
 import db from "../../models/index.js";
 import AppError from "../../utils/AppError.js";
@@ -26,9 +27,28 @@ export const createAdminOrStaff = async (req, res, next) => {
     );
   }
 
-  // If role is staff, ensure staffId is provided
-  if (role === ROLES.STAFF && !staffId) {
-    return next(new AppError("Staff ID is required for staff accounts.", 400));
+  // If role is staff, ensure staffId and designation are provided
+  if (role.toLowerCase() === ROLES.STAFF) {
+    if (!staffId) {
+      return next(
+        new AppError("Staff ID is required for staff accounts.", 400)
+      );
+    }
+    if (!designation) {
+      return next(
+        new AppError("Designation is required for staff accounts.", 400)
+      );
+    }
+    if (!ALLOWED_DESIGNATIONS.includes(designation)) {
+      return next(
+        new AppError(
+          `Invalid designation. Allowed values: ${ALLOWED_DESIGNATIONS.join(
+            ", "
+          )}`,
+          400
+        )
+      );
+    }
   }
 
   const t = await db.sequelize.transaction();
