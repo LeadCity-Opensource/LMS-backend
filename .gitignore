@@ -27,3 +27,5 @@ coverage/
 
 # Script file
 scripts/
+
+node_modules/

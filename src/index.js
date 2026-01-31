@@ -1,26 +1,15 @@
-import createApp from "./app.js";
-import { connectDB } from "./config/dbinit.js";
-import { env } from "./config/env.js";
-import { initializeAdmin } from "./data/bootstrap.js";
 
-const app = createApp();
 
-async function startServer() {
-  try {
-    await connectDB();
-    await initializeAdmin();
+const express = require("express");
+const dotenv = require("dotenv");
+dotenv.config();
 
-    const PORT = env.PORT || 5000;
+const app = express();
+app.use(express.json());
 
-    app.listen(PORT, "0.0.0.0", () => {
-      console.log(`[server]: API Service running on port ${PORT}`);
-    });
-  } catch (err) {
-    console.error("Failed to start server:", err);
-    process.exit(1);
-  }
-}
+const booksRoute = require("./routes/books"); // <-- correct relative path
+app.use("/books", booksRoute);
 
-startServer();
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
-export default app;
