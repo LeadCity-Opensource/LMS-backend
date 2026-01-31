@@ -1,6 +1,11 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { env } from "../../config/env.js";
+import {
+  ALLOWED_DESIGNATIONS,
+  STAFF_DESIGNATIONS,
+} from "../../constants/designations.js";
+import { ROLES } from "../../constants/roles.js";
 import db from "../../models/index.js";
 import AppError from "../../utils/AppError.js";
 
@@ -130,9 +135,30 @@ export const staffSignup = async (req, res, next) => {
     designation,
   } = req.body || {};
 
-  if (!email || !password || !firstName || !lastName || !staffId) {
+  if (
+    !email ||
+    !password ||
+    !firstName ||
+    !lastName ||
+    !staffId ||
+    !designation
+  ) {
     return next(new AppError("All required fields must be provided.", 400));
   }
+
+  if (designation && !ALLOWED_DESIGNATIONS.includes(designation)) {
+    return next(
+      new AppError(
+        `Invalid designation. Allowed values: ${ALLOWED_DESIGNATIONS.join(
+          ", "
+        )}`,
+        400
+      )
+    );
+  }
+
+  const role =
+    designation === STAFF_DESIGNATIONS.LIBRARIAN ? ROLES.ADMIN : ROLES.STAFF;
 
   const t = await db.sequelize.transaction();
 
@@ -160,7 +186,7 @@ export const staffSignup = async (req, res, next) => {
         firstName,
         lastName,
         phoneNumber,
-        role: "staff",
+        role,
       },
       { transaction: t }
     );
